@@ -248,16 +248,22 @@ public class MainServer extends AbstractHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
         int port =request.getServerPort();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while(headerNames.hasMoreElements()){
-            String headerName = headerNames.nextElement();
-            String headerValue = request.getHeader(headerName);
-            System.out.println(headerName + ":" + headerValue);
+        // Enumeration<String> headerNames = request.getHeaderNames();
+        // while(headerNames.hasMoreElements()){
+        //     String headerName = headerNames.nextElement();
+        //     String headerValue = request.getHeader(headerName);
+        //     System.out.println(headerName + ":" + headerValue);
+        // }
+        String xff = request.getHeader("X-Forwarded-For");
+        String proto = request.getHeader("X-Forwarded-Proto");
+        String scheme=request.getScheme();
+        if(proto!=null&&(proto.equals("https")||proto.equals("http"))){
+            scheme=proto;
         }
         // 拼接服务器地址
-        String licenseUrl = request.getScheme() + "://" + request.getServerName() + ((port==80||port==443)?"":(":" + request.getServerPort()));
+        String licenseUrl = scheme + "://" + request.getServerName() + ((port==80||port==443)?"":(":" + request.getServerPort()));
         
-        StringBuffer html = new StringBuffer("<h3>使用说明（Instructions for use）</h3>");
+        StringBuffer html = new StringBuffer("<h3>使用说明（Instructions for use）</h3>"+xff);
 
         html.append("<hr/>");
 
